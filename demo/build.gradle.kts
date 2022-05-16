@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
+    id("com.google.devtools.ksp")
 }
 
 version = "0.1"
@@ -11,14 +12,10 @@ repositories {
 }
 
 val kotlinVersion : String by project
-val kspVersion : String by project
-val koinVersion: String by project
 
 dependencies {
     implementation(project(":api"))
-    implementation("com.google.devtools.ksp:symbol-processing-api:$kotlinVersion-$kspVersion")
-    implementation("io.insert-koin:koin-core:$koinVersion")
-
+    ksp(project(":processor"))
     testImplementation(kotlin("test"))
 }
 
@@ -28,4 +25,10 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+kotlin.sourceSets.main {
+    kotlin.srcDirs(
+        file("$buildDir/generated/ksp/main/kotlin"),
+    )
 }

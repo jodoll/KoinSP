@@ -11,14 +11,10 @@ repositories {
 }
 
 val kotlinVersion : String by project
-val kspVersion : String by project
-val koinVersion: String by project
+val koinVersion : String by project
 
 dependencies {
-    implementation(project(":api"))
-    implementation("com.google.devtools.ksp:symbol-processing-api:$kotlinVersion-$kspVersion")
-    implementation("io.insert-koin:koin-core:$koinVersion")
-
+    api("io.insert-koin:koin-core:$koinVersion")
     testImplementation(kotlin("test"))
 }
 
