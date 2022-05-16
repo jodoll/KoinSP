@@ -11,12 +11,12 @@ import org.koin.core.module.Module
 import java.io.BufferedWriter
 import kotlin.reflect.KClass
 
-class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcessor{
+class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         println("Running processor")
         val koinModules = resolver
             .getSymbolsWithAnnotation(KoinSPModule::class.qualifiedName!!)
-            .filter { it is KSFunctionDeclaration || it is KSPropertyGetter || it is KSPropertyDeclaration}
+            .filter { it is KSFunctionDeclaration || it is KSPropertyGetter || it is KSPropertyDeclaration }
 
         if (!koinModules.iterator().hasNext()) return emptyList()
 

@@ -30,9 +30,10 @@ class KoinSPVisitor(
         val returnType = requireNotNull(getter.returnType, getter.receiver.wrongReturnType())
         require(returnType.resolve().isAssignableFrom(moduleType), getter.receiver.wrongReturnType())
         require(getter.receiver.isStatic()) { "Functions with ${KoinSPModule::class.simpleName} must be top level declarations or declared on objects: ${getter.receiver.sourceLocation}" }
-        require(getter.receiver.isPublic()) {"Functions with ${KoinSPModule::class.simpleName} must be public: ${getter.receiver.sourceLocation}"}
+        require(getter.receiver.isPublic()) { "Functions with ${KoinSPModule::class.simpleName} must be public: ${getter.receiver.sourceLocation}" }
 
-        val qualifiedName = requireNotNull(getter.receiver.qualifiedName?.asString()){ "Can't determine qualified name for ${getter.receiver.sourceLocation}"}
+        val qualifiedName =
+            requireNotNull(getter.receiver.qualifiedName?.asString()) { "Can't determine qualified name for ${getter.receiver.sourceLocation}" }
         writer.appendLine("$indent$qualifiedName,")
     }
 
@@ -40,9 +41,10 @@ class KoinSPVisitor(
         val returnType = requireNotNull(property.type, property.wrongReturnType())
         require(returnType.resolve().isAssignableFrom(moduleType), property.wrongReturnType())
         require(property.isStatic()) { "Functions with ${KoinSPModule::class.simpleName} must be top level declarations or declared on objects: ${property.sourceLocation}" }
-        require(property.isPublic()) {"Functions with ${KoinSPModule::class.simpleName} must be public: ${property.sourceLocation}"}
+        require(property.isPublic()) { "Functions with ${KoinSPModule::class.simpleName} must be public: ${property.sourceLocation}" }
 
-        val qualifiedName = requireNotNull(property.qualifiedName?.asString()){ "Can't determine qualified name for ${property.sourceLocation}"}
+        val qualifiedName =
+            requireNotNull(property.qualifiedName?.asString()) { "Can't determine qualified name for ${property.sourceLocation}" }
         writer.appendLine("$indent$qualifiedName,")
     }
 
@@ -51,9 +53,10 @@ class KoinSPVisitor(
         require(returnType.resolve().isAssignableFrom(moduleType), function.wrongReturnType())
         require(function.isCallableWithoutParameters()) { "Functions with ${KoinSPModule::class.simpleName} must be callable without parameters: $function.sourceLocation" }
         require(function.isStatic()) { "Functions with ${KoinSPModule::class.simpleName} must be top level declarations or declared on objects: $function.sourceLocation" }
-        require(function.isPublic()) {"Functions with ${KoinSPModule::class.simpleName} must be public: ${function.sourceLocation}"}
+        require(function.isPublic()) { "Functions with ${KoinSPModule::class.simpleName} must be public: ${function.sourceLocation}" }
 
-        val qualifiedName = requireNotNull(function.qualifiedName?.asString()){ "Can't determine qualified name for ${function.sourceLocation}"}
+        val qualifiedName =
+            requireNotNull(function.qualifiedName?.asString()) { "Can't determine qualified name for ${function.sourceLocation}" }
         writer.appendLine("$indent$qualifiedName(),")
     }
 
