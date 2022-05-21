@@ -29,12 +29,10 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.johannesdoll.koin.koinsp.api.KoinSPModule
 import org.koin.core.module.Module
-import java.io.BufferedWriter
 
 class KoinSPVisitor(
     private val resolver: Resolver,
-    private val writer: BufferedWriter,
-    private var indent: String = "    "
+    private val moduleNames: MutableList<String>
 ) : KSVisitorVoid() {
     companion object {
         fun KSDeclaration.wrongReturnType(): () -> String = {
@@ -56,7 +54,7 @@ class KoinSPVisitor(
 
         val qualifiedName =
             requireNotNull(property.qualifiedName?.asString()) { "Can't determine qualified name for ${property.sourceLocation}" }
-        writer.appendLine("$indent$qualifiedName,")
+        moduleNames.add(qualifiedName)
     }
 
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
@@ -68,7 +66,7 @@ class KoinSPVisitor(
 
         val qualifiedName =
             requireNotNull(function.qualifiedName?.asString()) { "Can't determine qualified name for ${function.sourceLocation}" }
-        writer.appendLine("$indent$qualifiedName(),")
+        moduleNames.add("$qualifiedName()")
     }
 
     private fun KSFunctionDeclaration.isCallableWithoutParameters(): Boolean =

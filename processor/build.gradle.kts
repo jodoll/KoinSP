@@ -26,6 +26,11 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+tasks.withType<KotlinCompile>().configureEach {
+    @Suppress("SuspiciousCollectionReassignment")
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+}
+
 tasks.test {
     useJUnitPlatform()
 }

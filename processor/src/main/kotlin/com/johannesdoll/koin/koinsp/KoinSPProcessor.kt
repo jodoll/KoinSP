@@ -23,63 +23,58 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.johannesdoll.koin.koinsp.api.KoinSPModule
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
+import com.squareup.kotlinpoet.ksp.writeTo
+import com.squareup.kotlinpoet.typeNameOf
 import org.koin.core.module.Module
-import java.io.BufferedWriter
-import kotlin.reflect.KClass
 
+@OptIn(KotlinPoetKspPreview::class)
 class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcessor {
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        println("Running processor")
         val koinModules = resolver
             .getSymbolsWithAnnotation(KoinSPModule::class.qualifiedName!!)
             .filter { it is KSFunctionDeclaration || it is KSPropertyDeclaration }
 
-        if (!koinModules.iterator().hasNext()) return emptyList()
-
-        createKoinFile(koinModules.mapNotNull { it.containingFile }).use { writer ->
-            writer.writePackage(KoinSPProcessor::class.java.packageName)
-            writer.writeImports(Module::class)
-            writer.writeKoinModulesFun(koinModules, resolver)
+        if (koinModules.iterator().hasNext()) {
+            createKoinModulesFile(koinModules, resolver)
         }
 
         return emptyList()
     }
 
-    private fun createKoinFile(dependencies: Sequence<KSFile>): BufferedWriter {
-        println("Creating new file")
-        return codeGenerator.createNewFile(
-            Dependencies(true, *dependencies.toList().toTypedArray()),
-            KoinSPProcessor::class.java.packageName,
-            "KoinSpModules"
-        ).bufferedWriter()
-    }
-
-    private fun BufferedWriter.writePackage(packageName: String) {
-        appendLine("package $packageName")
-        appendLine()
-    }
-
-    private fun BufferedWriter.writeImports(vararg classes: KClass<*>) {
-        classes
-            .mapNotNull { it.qualifiedName }
-            .sorted()
-            .forEach { appendLine("import $it") }
-        appendLine()
-    }
-
-    private fun BufferedWriter.writeKoinModulesFun(
-        koinModules: Sequence<KSNode>,
+    private fun createKoinModulesFile(
+        koinModules: Sequence<KSAnnotated>,
         resolver: Resolver
     ) {
-        appendLine("fun koinSPModules() : ${List::class.simpleName}<${Module::class.simpleName}> = listOf(")
-        koinModules.forEach { it.accept(KoinSPVisitor(resolver, this), Unit) }
-        appendLine(")")
+        val file = FileSpec.builder(KoinSPProcessor::class.java.packageName, "KoinSpModules")
+            .addImport(KoinSPModule::class, "")
+            .addFunction(koinModulesFunSpec(koinModules, resolver))
+            .build()
 
-        appendLine()
+        file.writeTo(codeGenerator, koinModules.toDependencies(aggregating = true))
+    }
+
+    private fun Sequence<KSAnnotated>.toDependencies(aggregating: Boolean) =
+        mapNotNull { it.containingFile }.toList().toTypedArray().let { Dependencies(aggregating, *it) }
+
+    private fun koinModulesFunSpec(
+        koinModules: Sequence<KSNode>,
+        resolver: Resolver
+    ): FunSpec {
+        val resolvedModules = mutableListOf<String>()
+        koinModules.forEach { it.accept(KoinSPVisitor(resolver, resolvedModules), Unit) }
+
+        return FunSpec.builder("koinSPModules")
+            .returns(typeNameOf<List<Module>>())
+            .addKdoc("Collection of all Modules provided by [${KoinSPModule::class.simpleName}].")
+            .addStatement("return listOf( ${resolvedModules.joinToString(", ")}\n)")
+            .build()
     }
 }
