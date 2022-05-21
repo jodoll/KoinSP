@@ -21,7 +21,13 @@ import com.google.devtools.ksp.closestClassDeclaration
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.symbol.*
+import com.google.devtools.ksp.symbol.ClassKind
+import com.google.devtools.ksp.symbol.FileLocation
+import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyGetter
+import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.johannesdoll.koin.koinsp.api.KoinSPModule
 import org.koin.core.module.Module
 import java.io.BufferedWriter
@@ -82,7 +88,6 @@ class KoinSPVisitor(
 
     private fun KSDeclaration.isStatic(): Boolean =
         parentDeclaration == null || closestClassDeclaration()?.classKind == ClassKind.OBJECT
-
 }
 
 val KSDeclaration.sourceLocation

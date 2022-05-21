@@ -11,8 +11,8 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion : String by project
-val kspVersion : String by project
+val kotlinVersion: String by project
+val kspVersion: String by project
 val koinVersion: String by project
 
 dependencies {
