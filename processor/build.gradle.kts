@@ -11,14 +11,17 @@ repositories {
     mavenCentral()
 }
 
+val koinVersion: String by project
+val kotlinPoetVersion: String by project
 val kotlinVersion: String by project
 val kspVersion: String by project
-val koinVersion: String by project
 
 dependencies {
     implementation(project(":api"))
     implementation("com.google.devtools.ksp:symbol-processing-api:$kotlinVersion-$kspVersion")
     implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("com.squareup:kotlinpoet-ksp:$kotlinPoetVersion")
+    implementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
 
     testImplementation(kotlin("test"))
 }
