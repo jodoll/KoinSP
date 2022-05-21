@@ -11,12 +11,15 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion : String by project
+val kotlinVersion: String by project
+val koTestVersion: String by project
 
 dependencies {
     implementation(project(":api"))
     ksp(project(":processor"))
+
     testImplementation(kotlin("test"))
+    testImplementation("io.kotest:kotest-runner-junit5:$koTestVersion")
 }
 
 tasks.test {
