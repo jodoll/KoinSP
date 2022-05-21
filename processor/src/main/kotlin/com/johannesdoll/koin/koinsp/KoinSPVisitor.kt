@@ -26,7 +26,6 @@ import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyGetter
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.johannesdoll.koin.koinsp.api.KoinSPModule
 import org.koin.core.module.Module
@@ -47,17 +46,6 @@ class KoinSPVisitor(
         resolver
             .getClassDeclarationByName(Module::class.qualifiedName!!)!!
             .asType(emptyList())
-    }
-
-    override fun visitPropertyGetter(getter: KSPropertyGetter, data: Unit) {
-        val returnType = requireNotNull(getter.returnType, getter.receiver.wrongReturnType())
-        require(returnType.resolve().isAssignableFrom(moduleType), getter.receiver.wrongReturnType())
-        require(getter.receiver.isStatic()) { "Functions with ${KoinSPModule::class.simpleName} must be top level declarations or declared on objects: ${getter.receiver.sourceLocation}" }
-        require(getter.receiver.isPublic()) { "Functions with ${KoinSPModule::class.simpleName} must be public: ${getter.receiver.sourceLocation}" }
-
-        val qualifiedName =
-            requireNotNull(getter.receiver.qualifiedName?.asString()) { "Can't determine qualified name for ${getter.receiver.sourceLocation}" }
-        writer.appendLine("$indent$qualifiedName,")
     }
 
     override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {

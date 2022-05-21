@@ -23,9 +23,6 @@ import org.koin.dsl.module
 
 object DemoModule {
 
-    @get:KoinSPModule
-    val fooModule: Module = module { }
-
     @KoinSPModule
     fun barModule(): Module = module { }
 

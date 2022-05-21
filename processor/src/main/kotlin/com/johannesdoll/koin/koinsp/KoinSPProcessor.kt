@@ -27,7 +27,6 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyGetter
 import com.johannesdoll.koin.koinsp.api.KoinSPModule
 import org.koin.core.module.Module
 import java.io.BufferedWriter
@@ -38,7 +37,7 @@ class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcesso
         println("Running processor")
         val koinModules = resolver
             .getSymbolsWithAnnotation(KoinSPModule::class.qualifiedName!!)
-            .filter { it is KSFunctionDeclaration || it is KSPropertyGetter || it is KSPropertyDeclaration }
+            .filter { it is KSFunctionDeclaration || it is KSPropertyDeclaration }
 
         if (!koinModules.iterator().hasNext()) return emptyList()
 
