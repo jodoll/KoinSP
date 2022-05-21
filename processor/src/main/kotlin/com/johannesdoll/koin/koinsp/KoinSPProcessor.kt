@@ -37,9 +37,15 @@ import org.koin.core.module.Module
 @OptIn(KotlinPoetKspPreview::class)
 class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcessor {
 
+    companion object {
+        private val moduleAnnotation = KoinSPModule::class
+        private const val functionName = "koinSPModules"
+        private const val fileName = "KoinSpModules"
+    }
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val koinModules = resolver
-            .getSymbolsWithAnnotation(KoinSPModule::class.qualifiedName!!)
+            .getSymbolsWithAnnotation(moduleAnnotation.qualifiedName!!)
             .filter { it is KSFunctionDeclaration || it is KSPropertyDeclaration }
 
         if (koinModules.iterator().hasNext()) {
@@ -53,8 +59,8 @@ class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcesso
         koinModules: Sequence<KSAnnotated>,
         resolver: Resolver
     ) {
-        val file = FileSpec.builder(KoinSPProcessor::class.java.packageName, "KoinSpModules")
-            .addImport(KoinSPModule::class, "")
+        val file = FileSpec.builder(KoinSPProcessor::class.java.packageName, fileName)
+            .addImport(moduleAnnotation, "")
             .addFunction(koinModulesFunSpec(koinModules, resolver))
             .build()
 
@@ -71,9 +77,9 @@ class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcesso
         val resolvedModules = mutableListOf<String>()
         koinModules.forEach { it.accept(KoinSPVisitor(resolver, resolvedModules), Unit) }
 
-        return FunSpec.builder("koinSPModules")
+        return FunSpec.builder(functionName)
             .returns(typeNameOf<List<Module>>())
-            .addKdoc("Collection of all Modules provided by [${KoinSPModule::class.simpleName}].")
+            .addKdoc("Collection of all Modules provided by [${moduleAnnotation.simpleName}].")
             .addStatement("return listOf( ${resolvedModules.joinToString(", ")}\n)")
             .build()
     }
