@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("com.google.devtools.ksp")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 version = "0.1"

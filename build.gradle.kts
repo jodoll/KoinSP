@@ -7,8 +7,13 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 plugins {
     kotlin("jvm") apply false
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 allprojects {
