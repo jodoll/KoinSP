@@ -17,15 +17,15 @@
 
 package com.johannesdoll.koin.koinsp.demo
 
-import com.johannesdoll.koin.koinsp.api.KoinSPModule
+import com.johannesdoll.koin.koinsp.api.ProvideModule
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 object DemoModule {
 
-    @KoinSPModule
+    @ProvideModule
     fun barModule(): Module = module { }
 
-    @KoinSPModule
+    @ProvideModule
     val bazModule: Module = module { }
 }

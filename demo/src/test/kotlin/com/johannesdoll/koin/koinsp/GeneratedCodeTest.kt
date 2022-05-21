@@ -17,7 +17,7 @@
 
 package com.johannesdoll.koin.koinsp
 
-import com.johannesdoll.koin.koinsp.api.KoinSPModule
+import com.johannesdoll.koin.koinsp.api.ProvideModule
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import org.koin.core.module.Module
@@ -27,10 +27,10 @@ object TestModules {
 
     val functionModule = module { single { "Function" } }
 
-    @KoinSPModule
+    @ProvideModule
     fun barModule(): Module = functionModule
 
-    @KoinSPModule
+    @ProvideModule
     val propertyModule: Module = module { single { "Property" } }
 }
 

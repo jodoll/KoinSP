@@ -27,7 +27,7 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
-import com.johannesdoll.koin.koinsp.api.KoinSPModule
+import com.johannesdoll.koin.koinsp.api.ProvideModule
 import org.koin.core.module.Module
 
 class KoinSPVisitor(
@@ -36,7 +36,7 @@ class KoinSPVisitor(
 ) : KSVisitorVoid() {
     companion object {
         fun KSDeclaration.wrongReturnType(): () -> String = {
-            "Functions with ${KoinSPModule::class.simpleName} must return ${Module::class.simpleName}: $sourceLocation"
+            "Functions with ${ProvideModule::class.simpleName} must return ${Module::class.simpleName}: $sourceLocation"
         }
     }
 
@@ -49,8 +49,8 @@ class KoinSPVisitor(
     override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {
         val returnType = requireNotNull(property.type, property.wrongReturnType())
         require(returnType.resolve().isAssignableFrom(moduleType), property.wrongReturnType())
-        require(property.isStatic()) { "Functions with ${KoinSPModule::class.simpleName} must be top level declarations or declared on objects: ${property.sourceLocation}" }
-        require(property.isPublic()) { "Functions with ${KoinSPModule::class.simpleName} must be public: ${property.sourceLocation}" }
+        require(property.isStatic()) { "Functions with ${ProvideModule::class.simpleName} must be top level declarations or declared on objects: ${property.sourceLocation}" }
+        require(property.isPublic()) { "Functions with ${ProvideModule::class.simpleName} must be public: ${property.sourceLocation}" }
 
         val qualifiedName =
             requireNotNull(property.qualifiedName?.asString()) { "Can't determine qualified name for ${property.sourceLocation}" }
@@ -60,9 +60,9 @@ class KoinSPVisitor(
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
         val returnType = requireNotNull(function.returnType, function.wrongReturnType())
         require(returnType.resolve().isAssignableFrom(moduleType), function.wrongReturnType())
-        require(function.isCallableWithoutParameters()) { "Functions with ${KoinSPModule::class.simpleName} must be callable without parameters: $function.sourceLocation" }
-        require(function.isStatic()) { "Functions with ${KoinSPModule::class.simpleName} must be top level declarations or declared on objects: $function.sourceLocation" }
-        require(function.isPublic()) { "Functions with ${KoinSPModule::class.simpleName} must be public: ${function.sourceLocation}" }
+        require(function.isCallableWithoutParameters()) { "Functions with ${ProvideModule::class.simpleName} must be callable without parameters: $function.sourceLocation" }
+        require(function.isStatic()) { "Functions with ${ProvideModule::class.simpleName} must be top level declarations or declared on objects: $function.sourceLocation" }
+        require(function.isPublic()) { "Functions with ${ProvideModule::class.simpleName} must be public: ${function.sourceLocation}" }
 
         val qualifiedName =
             requireNotNull(function.qualifiedName?.asString()) { "Can't determine qualified name for ${function.sourceLocation}" }

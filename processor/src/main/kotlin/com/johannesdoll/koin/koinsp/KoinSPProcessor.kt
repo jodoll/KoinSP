@@ -26,7 +26,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.johannesdoll.koin.koinsp.api.KoinSPModule
+import com.johannesdoll.koin.koinsp.api.ProvideModule
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
@@ -38,7 +38,7 @@ import org.koin.core.module.Module
 class KoinSPProcessor(private val codeGenerator: CodeGenerator) : SymbolProcessor {
 
     companion object {
-        private val moduleAnnotation = KoinSPModule::class
+        private val moduleAnnotation = ProvideModule::class
         private const val functionName = "koinSPModules"
         private const val fileName = "KoinSpModules"
     }
